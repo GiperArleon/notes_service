@@ -9,7 +9,6 @@ import java.util.*;
 
 public class UtilData {
     public static final String NOTE_ID = "1";
-    public static final String WRONG_NOTE_ID = "999";
     public static final String NOTE_TITLE = "Test Title";
     public static final String NOTE_CONTENT = "Test Content";
     public static final String TAG_ONE = "work";
