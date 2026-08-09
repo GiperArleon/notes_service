@@ -3,8 +3,10 @@ package com.example.demo.service;
 import com.example.demo.dao.NoteRepository;
 import com.example.demo.dto.Note;
 import com.example.demo.dto.NoteRequest;
+import com.example.demo.mapper.NoteMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.HashSet;
 import java.util.List;
@@ -15,15 +17,12 @@ import java.util.List;
 public class NoteServiceImpl implements NoteService {
 
     private final NoteRepository noteRepository;
+    private final NoteMapper noteMapper;
 
     @Override
-    public Note createNote(NoteRequest request) {
-        Note note = new Note(
-                request.getTitle(),
-                request.getContent(),
-                request.getTags() != null ? new HashSet<>(request.getTags()) : new HashSet<>()
-        );
-        return noteRepository.save(note);
+    public ResponseEntity<Note> createNote(NoteRequest request) {
+        var note = noteRepository.save(noteMapper.toNote(request));
+        return noteMapper.toNoteResponse(note);
     }
 
     @Override

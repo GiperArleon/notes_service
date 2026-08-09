@@ -2,6 +2,8 @@ package com.example.demo.utils;
 
 import com.example.demo.dto.Note;
 import com.example.demo.dto.NoteRequest;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.Collections;
@@ -61,5 +63,11 @@ public class UtilData {
                 UPDATE_CONTENT,
                 updatedTagsOf()
         );
+    }
+
+    public static ResponseEntity<Note> noteResponseOf() {
+        return ResponseEntity
+                .status(HttpStatus.CREATED)
+                .body(noteOf());
     }
 }

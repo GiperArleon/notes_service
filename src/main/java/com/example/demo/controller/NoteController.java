@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-
 import com.example.demo.dto.Note;
 import com.example.demo.dto.NoteRequest;
 import com.example.demo.service.NoteService;
@@ -32,8 +31,7 @@ public class NoteController {
     public ResponseEntity<Note> createNote(
             @Valid @RequestBody NoteRequest request
     ) {
-        Note created = noteService.createNote(request);
-        return ResponseEntity.status(HttpStatus.CREATED).body(created);
+        return noteService.createNote(request);
     }
 
     @GetMapping("/{id}")
@@ -41,8 +39,7 @@ public class NoteController {
             @PathVariable String id
     ) {
         try {
-            Note note = noteService.getNoteById(id);
-            return ResponseEntity.ok(note);
+            return ResponseEntity.ok(noteService.getNoteById(id));
         } catch (RuntimeException e) {
             log.error("note with id = {} not found", id);
             return ResponseEntity.notFound().build();

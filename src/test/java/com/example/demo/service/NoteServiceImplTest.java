@@ -3,29 +3,21 @@ package com.example.demo.service;
 import com.example.demo.dao.NoteRepository;
 import com.example.demo.dto.Note;
 import com.example.demo.dto.NoteRequest;
+import com.example.demo.mapper.NoteMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.http.ResponseEntity;
 
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
-import static com.example.demo.utils.UtilData.NOTE_ID;
-import static com.example.demo.utils.UtilData.NOTE_TITLE;
-import static com.example.demo.utils.UtilData.TAG_ONE;
-import static com.example.demo.utils.UtilData.TAG_THREE;
-import static com.example.demo.utils.UtilData.UPDATE_CONTENT;
-import static com.example.demo.utils.UtilData.UPDATE_TITLE;
-import static com.example.demo.utils.UtilData.WRONG_NOTE_ID;
-import static com.example.demo.utils.UtilData.noteOf;
-import static com.example.demo.utils.UtilData.noteRequestOf;
-import static com.example.demo.utils.UtilData.updateRequestOf;
-import static com.example.demo.utils.UtilData.updatedNoteOf;
+import static com.example.demo.utils.UtilData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -39,12 +31,12 @@ import static org.mockito.Mockito.when;
 class NoteServiceImplTest {
 
     private Note testNote;
-
     private NoteRequest testRequest;
-
+    private ResponseEntity<Note> testResponse;
     @Mock
     private NoteRepository noteRepository;
-
+    @Mock
+    private NoteMapper noteMapper;
     @InjectMocks
     private NoteServiceImpl noteService;
 
@@ -52,18 +44,22 @@ class NoteServiceImplTest {
     void setUp() {
         testNote = noteOf();
         testRequest = noteRequestOf();
+        testResponse = noteResponseOf();
     }
 
     @Test
     void createNote_ShouldReturnCreatedNote() {
         when(noteRepository.save(any(Note.class))).thenReturn(testNote);
+        when(noteMapper.toNote(any(NoteRequest.class))).thenReturn(testNote);
+        when(noteMapper.toNoteResponse(any(Note.class))).thenReturn(testResponse);
 
-        Note result = noteService.createNote(testRequest);
+        ResponseEntity<Note> result = noteService.createNote(testRequest);
 
         assertNotNull(result);
-        assertEquals(testNote.getTitle(), result.getTitle());
-        assertEquals(testNote.getContent(), result.getContent());
-        assertEquals(testNote.getTags(), result.getTags());
+        assertNotNull(result.getBody());
+        assertEquals(testNote.getTitle(), result.getBody().getTitle());
+        assertEquals(testNote.getContent(), result.getBody().getContent());
+        assertEquals(testNote.getTags(), result.getBody().getTags());
         verify(noteRepository, times(1)).save(any(Note.class));
     }
 
