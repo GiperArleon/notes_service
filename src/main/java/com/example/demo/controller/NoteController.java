@@ -6,10 +6,8 @@ import com.example.demo.service.NoteService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -38,22 +36,14 @@ public class NoteController {
     public ResponseEntity<Note> getNote(
             @PathVariable String id
     ) {
-        try {
-            return ResponseEntity.ok(noteService.getNoteById(id));
-        } catch (RuntimeException e) {
-            log.error("note with id = {} not found", id);
-            return ResponseEntity.notFound().build();
-        }
+        return noteService.getNoteById(id);
     }
 
     @GetMapping
     public ResponseEntity<List<Note>> getNotes(
             @RequestParam(required = false) String tag
     ) {
-        if (tag != null && !tag.isEmpty()) {
-            return ResponseEntity.ok(noteService.getNotesByTag(tag));
-        }
-        return ResponseEntity.ok(noteService.getAllNotes());
+        return noteService.getNotesByTag(tag);
     }
 
     @PutMapping("/{id}")
@@ -65,7 +55,9 @@ public class NoteController {
             Note updated = noteService.updateNote(id, request);
             return ResponseEntity.ok(updated);
         } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
+            return ResponseEntity
+              .notFound()
+              .build();
         }
     }
 
@@ -73,16 +65,10 @@ public class NoteController {
     public ResponseEntity<Void> deleteNote(
             @PathVariable String id
     ) {
-        try {
-            noteService.deleteNote(id);
-            return ResponseEntity.noContent().build();
-        } catch (RuntimeException e) {
-            return ResponseEntity.notFound().build();
-        }
-    }
+        noteService.deleteNote(id);
 
-    @ExceptionHandler(RuntimeException.class)
-    public ResponseEntity<String> handleRuntimeException(RuntimeException e) {
-        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        return ResponseEntity
+          .noContent()
+          .build();
     }
 }

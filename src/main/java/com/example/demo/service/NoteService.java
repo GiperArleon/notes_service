@@ -7,9 +7,8 @@ import java.util.List;
 
 public interface NoteService {
     ResponseEntity<Note> createNote(NoteRequest request);
-    Note getNoteById(String id);
-    List<Note> getAllNotes();
-    List<Note> getNotesByTag(String tag);
+    ResponseEntity<Note> getNoteById(String id);
+    ResponseEntity<List<Note>> getNotesByTag(String tag);
     Note updateNote(String id, NoteRequest request);
     void deleteNote(String id);
 }

@@ -5,10 +5,7 @@ import com.example.demo.dto.NoteRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
 
 public class UtilData {
     public static final String NOTE_ID = "1";
@@ -69,5 +66,13 @@ public class UtilData {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(noteOf());
+    }
+
+    public static List<Note> notesOf() {
+        return Arrays.asList(noteOf(), new Note());
+    }
+
+    public static ResponseEntity<List<Note>> notesResponseOf(List<Note> notes) {
+        return ResponseEntity.ok(notes);
     }
 }

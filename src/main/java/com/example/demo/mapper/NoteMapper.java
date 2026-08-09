@@ -6,11 +6,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Component;
 import java.util.HashSet;
+import java.util.List;
 
 @Component
 public class NoteMapper {
 
-    public Note toNote(NoteRequest request) {
+    public Note toNote(
+            NoteRequest request
+    ) {
         return new Note(
                 request.getTitle(),
                 request.getContent(),
@@ -20,9 +23,17 @@ public class NoteMapper {
         );
     }
 
-    public ResponseEntity<Note> toNoteResponse(Note note) {
+    public ResponseEntity<Note> toNoteResponse(
+            Note note
+    ) {
         return ResponseEntity
                 .status(HttpStatus.CREATED)
                 .body(note);
+    }
+
+    public ResponseEntity<List<Note>> toNotesResponse(
+            List<Note> notes
+    ) {
+        return ResponseEntity.ok(notes);
     }
 }

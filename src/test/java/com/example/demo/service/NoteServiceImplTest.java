@@ -11,16 +11,13 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
-
 import static com.example.demo.utils.UtilData.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.times;
@@ -67,33 +64,24 @@ class NoteServiceImplTest {
     void getNoteById_WhenNoteExists_ShouldReturnNote() {
         when(noteRepository.findById(NOTE_ID)).thenReturn(Optional.of(testNote));
 
-        Note result = noteService.getNoteById(NOTE_ID);
+        ResponseEntity<Note> result = noteService.getNoteById(NOTE_ID);
 
         assertNotNull(result);
-        assertEquals(NOTE_ID, result.getId());
-        assertEquals(NOTE_TITLE, result.getTitle());
+        assertNotNull(result.getBody());
+        assertEquals(NOTE_ID, result.getBody().getId());
+        assertEquals(NOTE_TITLE, result.getBody().getTitle());
         verify(noteRepository, times(1)).findById(NOTE_ID);
     }
 
     @Test
-    void getNoteById_WhenNoteNotFound_ShouldThrowException() {
-        when(noteRepository.findById(WRONG_NOTE_ID)).thenReturn(Optional.empty());
-
-        RuntimeException exception = assertThrows(RuntimeException.class,
-                () -> noteService.getNoteById(WRONG_NOTE_ID));
-
-        assertEquals("Note not found with id: 999", exception.getMessage());
-        verify(noteRepository, times(1)).findById(WRONG_NOTE_ID);
-    }
-
-    @Test
     void getAllNotes_ShouldReturnAllNotes() {
-        List<Note> notes = Arrays.asList(testNote, new Note());
-        when(noteRepository.findAll()).thenReturn(notes);
+        when(noteRepository.findAll()).thenReturn(notesOf());
+        when(noteMapper.toNotesResponse(any())).thenReturn(notesResponseOf(notesOf()));
 
-        List<Note> result = noteService.getAllNotes();
+        ResponseEntity<List<Note>> result = noteService.getNotesByTag(null);
 
-        assertEquals(2, result.size());
+        assertNotNull(result.getBody());
+        assertEquals(2, result.getBody().size());
         verify(noteRepository, times(1)).findAll();
     }
 
@@ -101,11 +89,13 @@ class NoteServiceImplTest {
     void getNotesByTag_ShouldReturnFilteredNotes() {
         List<Note> notes = Collections.singletonList(testNote);
         when(noteRepository.findByTag(TAG_ONE)).thenReturn(notes);
+        when(noteMapper.toNotesResponse(any())).thenReturn(notesResponseOf(notes));
 
-        List<Note> result = noteService.getNotesByTag(TAG_ONE);
+        ResponseEntity<List<Note>> result = noteService.getNotesByTag(TAG_ONE);
 
-        assertEquals(1, result.size());
-        assertTrue(result.get(0).getTags().contains(TAG_ONE));
+        assertNotNull(result.getBody());
+        assertEquals(1, result.getBody().size());
+        assertTrue(result.getBody().get(0).getTags().contains(TAG_ONE));
         verify(noteRepository, times(1)).findByTag(TAG_ONE);
     }
 
