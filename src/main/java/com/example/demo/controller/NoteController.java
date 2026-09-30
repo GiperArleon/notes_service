@@ -25,6 +25,9 @@ import java.util.List;
 public class NoteController {
     private final NoteService noteService;
 
+    /*
+     * 1
+     */
     @PostMapping
     public ResponseEntity<Note> createNote(
             @Valid @RequestBody NoteRequest request
