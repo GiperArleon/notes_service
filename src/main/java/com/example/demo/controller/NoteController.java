@@ -35,6 +35,9 @@ public class NoteController {
         return noteService.createNote(request);
     }
 
+    /*
+     * 2
+     */
     @GetMapping("/{id}")
     public ResponseEntity<Note> getNote(
             @PathVariable String id
