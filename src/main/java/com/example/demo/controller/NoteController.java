@@ -45,6 +45,9 @@ public class NoteController {
         return noteService.getNoteById(id);
     }
 
+    /*
+     * 3
+     */
     @GetMapping
     public ResponseEntity<List<Note>> getNotes(
             @RequestParam(required = false) String tag
